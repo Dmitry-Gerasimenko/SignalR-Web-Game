@@ -1,0 +1,112 @@
+﻿@{
+    ViewData["Title"] = "Battle City - SignalR tren";
+}
+
+<div id="actionArea"  class="bg-dark vh-100">
+    <div class="row mt2 p-1 m-0 h-100 bg-secondary">
+
+        <div id="gameArea" class="col bg-primary">
+            <hr />
+            <h1>Game</h1>
+            <input type="checkbox" checked 
+                   data-toggle="toggle" data-on="<i class='fa fa-play'></i> Play" 
+                   data-off="<i class='fa fa-pause'></i> Pause" />
+
+            <button id="chatBtn" style="bottom:3vh; right:2vw; width: 50px; height: 50px; border-radius: 50%;"
+                    data-toggle="collapse" data-target="#chatArea"
+                    aria-expanded="false" aria-controls="chatArea"
+                    class="btn btn-sm btn-outline-light position-absolute">
+                Chat
+            </button>
+        </div>
+
+        <div id="chatArea" class="bg-light col-4 collapse p-1 h-100">
+            <div class="chatbox">
+                <div class="messages">
+                    <div class="chat-message">
+                        <div class="user-photo"></div>
+                        <div class="message-info">
+                            <p class="message-sender">Dmitry Gerasimenko</p>
+                            <p class="message-text">First short Message .. </p>
+                        </div>
+                    </div>
+
+                    <div class="chat-message">
+                        <div class="user-photo"></div>
+                        <div class="message-info">
+                            <p class="message-sender">Aliaksandr Man</p>
+                            <p class="message-text">
+                                Another one looks like a little bt longer than first;
+                                Sometimes somebody can create some of random text that will have a good length
+                            </p>
+                        </div>
+                    </div>
+                    <div class="chat-message">
+                        <div class="user-photo"></div>
+                        <div class="message-info">
+                            <p class="message-sender">Aliaksandr Man</p>
+                            <p class="message-text">
+                                Another one looks like a little bt longer than first;
+                                Sometimes somebody can create some of random text that will have a good length
+                            </p>
+                        </div>
+                    </div>
+                    <div class="chat-message">
+                        <div class="user-photo"></div>
+                        <div class="message-info">
+                            <p class="message-sender">Aliaksandr Man</p>
+                            <p class="message-text">
+                                Another one looks like a little bt longer than first;
+                                Sometimes somebody can create some of random text that will have a good length
+                            </p>
+                        </div>
+                    </div>
+                    <div class="chat-message">
+                        <div class="user-photo"></div>
+                        <div class="message-info">
+                            <p class="message-sender">Aliaksandr Man</p>
+                            <p class="message-text">
+                                Another one looks like a little bt longer than first;
+                                Sometimes somebody can create some of random text that will have a good length
+                            </p>
+                        </div>
+                    </div>
+                    <div class="chat-message">
+                        <div class="user-photo"></div>
+                        <div class="message-info">
+                            <p class="message-sender">Aliaksandr Man</p>
+                            <p class="message-text">
+                                Another one looks like a little bt longer than first;
+                                Sometimes somebody can create some of random text that will have a good length
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="chat-message">
+                        <div class="user-photo"></div>
+                        <div class="message-info">
+                            <p class="message-sender">Чушка</p>
+                            <p class="message-text">
+                                Вошёл в чат. Сделать ajax подгрузку предыдущих логов и сообщ. из get rest api;
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="message-form">
+                    <form>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+    @*<script src="~/js/Chat.js"></script>*@
+
+}
