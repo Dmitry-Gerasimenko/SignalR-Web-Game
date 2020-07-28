@@ -1,19 +1,45 @@
-﻿
-var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+﻿var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+var createMessageElement = function(userName, message) {
+    let messageElement = document.createElement("div");
+        messageElement.classList.add("chat-message");
+    let userPhotoElement = document.createElement("div");
+        userPhotoElement.classList.add("user-photo");
+    let messageInfoElement = document.createElement("div");
+        messageInfoElement.classList.add("message-info");
+    let messageSenderElement = document.createElement("p");
+        messageSenderElement.classList.add("message-sender");
+    let messageTextElement = document.createElement("p");
+        messageTextElement.classList.add("message-text");
+
+    messageSenderElement.textContent = userName;
+    messageTextElement.textContent = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    messageElement.appendChild(userPhotoElement);
+    messageInfoElement.appendChild(messageSenderElement);
+    messageInfoElement.appendChild(messageTextElement)
+
+    messageElement.appendChild(messageInfoElement);
+    return messageElement;
+}
 
 //Disable send button until connection is established
 document.getElementById("sendButton").disabled = true;
 
+// Remove this const after
+const senderName = 'usernameFromChat.js';
+
 connection.on("ReceiveMessage", function (user, message) {
-    var msgText = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    var userName = user;
+    var createdMessageElement = createMessageElement(user, message);
 
-    var messageElement = document.createElement("div");
-    messageElement.
+    var msgList = document.getElementById("messagesList");
+    msgList.appendChild(createdMessageElement);
 
-    var li = document.createElement("li");
-    li.textContent = encodedMsg;
-    document.getElementById("messagesList").appendChild(li);
+    if (senderName.toLowerCase() == user.toLowerCase()) {
+        msgList.scrollTop = msgList.scrollHeight;
+    }
+    else {
+        alert('Message has received from another people, needed to notify me for ex via bootstrap 4 badge')
+    }
 });
 
 connection
@@ -26,11 +52,14 @@ connection
     });
 
 document.getElementById("sendButton").addEventListener("click", function (event) {
-    var user = document.getElementById("userInput").value;
-    var message = document.getElementById("messageInput").value;
+    let msgArea = document.getElementById("messageTextArea");
+    let msgText = msgArea.value;
+    msgArea.value = '';
 
-    connection.invoke("SendMessage", user, message).catch(function (err) {
-        return console.error(err.toString());
-    });
+    connection.invoke("SendMessage", senderName, msgText)
+        .catch(function (err) {
+            return console.error(err.toString());
+        });
+
     event.preventDefault();
 });

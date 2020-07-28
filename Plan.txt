@@ -2,5 +2,5 @@ Base bootstrap grid on the index.html
 Base SignalR simple chat
 Separate the solution into layers
 Base game 
-Separate game
+Separate game and its logic with Game Api
 Create another one client app

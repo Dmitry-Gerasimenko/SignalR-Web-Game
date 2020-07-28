@@ -22,7 +22,7 @@
 
         <div id="chatArea" class="bg-light col-4 collapse p-1 h-100">
             <div class="chatbox">
-                <div class="messages">
+                <div id="messagesList" class="messages">
                     <div class="chat-message">
                         <div class="user-photo"></div>
                         <div class="message-info">
@@ -93,11 +93,10 @@
                     </div>
 
                 </div>
-
                 <div class="message-form">
-                    <form>
+                        <textarea id="messageTextArea"></textarea>
 
-                    </form>
+                        <a id="sendButton" href="##" class="obl"><i class='fa fa-send'></i></a>
                 </div>
             </div>
         </div>
@@ -107,6 +106,17 @@
 @section scripts {
 
     <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
-    @*<script src="~/js/Chat.js"></script>*@
+    <script src="~/js/Chat.js"></script>
 
+
+    <script type="text/javascript">
+        $('#chatArea').on('shown.bs.collapse', function () {
+            document.getElementById("chatBtn").classList.add('bg-success');
+            document.getElementById("messagesList").scrollTop = document.getElementById("messagesList").scrollHeight;
+        });
+
+        $('#chatArea').on('hidden.bs.collapse', function () {
+            document.getElementById("chatBtn").classList.remove('bg-success');
+        });
+    </script>
 }
