@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DAL.Model.Chat
 {
@@ -10,8 +11,9 @@ namespace DAL.Model.Chat
 
         public DateTime CreationDate { get; set; }
 
-        public ApplicationUser User { get; set; }
+        public virtual ApplicationUser User { get; set; }
 
+        [ForeignKey("Id")]
         public string ApplicationUserId { get; set; }
     }
 }

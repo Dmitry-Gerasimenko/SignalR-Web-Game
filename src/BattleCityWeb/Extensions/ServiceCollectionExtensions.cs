@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BLL.Interfaces;
+using BLL.Services;
 using BLL.Utils;
 using DAL.Context;
 using DAL.Interfaces;
@@ -32,6 +33,9 @@ namespace BattleCityWeb.Extensions
             services.Scan(scan =>
             {
                 scan.FromAssembliesOf(typeof(IService<>))
+                        .AddClasses(classes => classes.AssignableTo(typeof(IUserService)))
+                            .AsImplementedInterfaces()
+                            .WithTransientLifetime()
                         .AddClasses(classes => classes.AssignableTo(typeof(IService<>)))
                             .UsingRegistrationStrategy(RegistrationStrategy.Skip)
                             .AsImplementedInterfaces()

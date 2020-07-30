@@ -34,13 +34,22 @@ connection.on("ReceiveMessage", function (user, message) {
     var msgList = document.getElementById("messagesList");
     msgList.appendChild(createdMessageElement);
 
-    if (senderName.toLowerCase() == user.toLowerCase()) {
+    if (user.toLowerCase() == getCurrentUserNameWrapper().toLowerCase()) {
         msgList.scrollTop = msgList.scrollHeight;
     }
     else {
-        alert('Message has received from another people, needed to notify me for ex via bootstrap 4 badge')
+        soundClick();
+        //alert('Message has received from another people, needed to notify me for ex via bootstrap 4 badge')
     }
 });
+connection.on("NotifyOnConnection", function (messageInfo) {
+    var createdMessageElement = createMessageElement("CONNECTION LISTENER", messageInfo);
+    createdMessageElement.classList.add("bg-light");
+
+    var msgList = document.getElementById("messagesList");
+    msgList.appendChild(createdMessageElement);
+});
+
 
 connection
     .start()
@@ -54,9 +63,9 @@ connection
 document.getElementById("sendButton").addEventListener("click", function (event) {
     let msgArea = document.getElementById("messageTextArea");
     let msgText = msgArea.value;
-    msgArea.value = '';
 
-    connection.invoke("SendMessage", senderName, msgText)
+    msgArea.value = '';
+    connection.invoke("SendMessage", msgText)
         .catch(function (err) {
             return console.error(err.toString());
         });

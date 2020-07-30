@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace DAL.Model.Chat
 {

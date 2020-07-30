@@ -1,15 +1,23 @@
-﻿@{
-    ViewData["Title"] = "Battle City - SignalR tren";
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<DAL.Model.Chat.ApplicationUser> userManager
+@{
+    var userName = (await userManager.GetUserAsync(User))?.NickName;
+    if (string.IsNullOrEmpty(userName))
+        userName = "Anonymous";
 }
 
-<div id="actionArea"  class="bg-dark vh-100">
+@{
+    ViewData["Title"] = "Battle City - SignalR";
+}
+
+<div id="actionArea" class="bg-dark vh-100">
     <div class="row mt2 p-1 m-0 h-100 bg-secondary">
 
         <div id="gameArea" class="col bg-primary">
             <hr />
             <h1>Game</h1>
-            <input type="checkbox" checked 
-                   data-toggle="toggle" data-on="<i class='fa fa-play'></i> Play" 
+            <input type="checkbox" checked
+                   data-toggle="toggle" data-on="<i class='fa fa-play'></i> Play"
                    data-off="<i class='fa fa-pause'></i> Pause" />
 
             <button id="chatBtn" style="bottom:3vh; right:2vw; width: 50px; height: 50px; border-radius: 50%;"
@@ -23,64 +31,6 @@
         <div id="chatArea" class="bg-light col-4 collapse p-1 h-100">
             <div class="chatbox">
                 <div id="messagesList" class="messages">
-                    <div class="chat-message">
-                        <div class="user-photo"></div>
-                        <div class="message-info">
-                            <p class="message-sender">Dmitry Gerasimenko</p>
-                            <p class="message-text">First short Message .. </p>
-                        </div>
-                    </div>
-
-                    <div class="chat-message">
-                        <div class="user-photo"></div>
-                        <div class="message-info">
-                            <p class="message-sender">Aliaksandr Man</p>
-                            <p class="message-text">
-                                Another one looks like a little bt longer than first;
-                                Sometimes somebody can create some of random text that will have a good length
-                            </p>
-                        </div>
-                    </div>
-                    <div class="chat-message">
-                        <div class="user-photo"></div>
-                        <div class="message-info">
-                            <p class="message-sender">Aliaksandr Man</p>
-                            <p class="message-text">
-                                Another one looks like a little bt longer than first;
-                                Sometimes somebody can create some of random text that will have a good length
-                            </p>
-                        </div>
-                    </div>
-                    <div class="chat-message">
-                        <div class="user-photo"></div>
-                        <div class="message-info">
-                            <p class="message-sender">Aliaksandr Man</p>
-                            <p class="message-text">
-                                Another one looks like a little bt longer than first;
-                                Sometimes somebody can create some of random text that will have a good length
-                            </p>
-                        </div>
-                    </div>
-                    <div class="chat-message">
-                        <div class="user-photo"></div>
-                        <div class="message-info">
-                            <p class="message-sender">Aliaksandr Man</p>
-                            <p class="message-text">
-                                Another one looks like a little bt longer than first;
-                                Sometimes somebody can create some of random text that will have a good length
-                            </p>
-                        </div>
-                    </div>
-                    <div class="chat-message">
-                        <div class="user-photo"></div>
-                        <div class="message-info">
-                            <p class="message-sender">Aliaksandr Man</p>
-                            <p class="message-text">
-                                Another one looks like a little bt longer than first;
-                                Sometimes somebody can create some of random text that will have a good length
-                            </p>
-                        </div>
-                    </div>
 
                     <div class="chat-message">
                         <div class="user-photo"></div>
@@ -94,9 +44,9 @@
 
                 </div>
                 <div class="message-form">
-                        <textarea id="messageTextArea"></textarea>
+                    <textarea id="messageTextArea"></textarea>
 
-                        <a id="sendButton" href="##" class="obl"><i class='fa fa-send'></i></a>
+                    <a id="sendButton" href="##" class="obl"><i class='fa fa-send'></i></a>
                 </div>
             </div>
         </div>
@@ -110,13 +60,50 @@
 
 
     <script type="text/javascript">
+
+        function getCurrentUserNameWrapper() {
+            return '@userName';
+        };
+
+        function soundClick() {
+            var audio = new Audio();
+            audio.src = "/sounds/print.mp3"; 
+            audio.volume = 0.3;
+            audio.autoplay = true;
+        };
+
         $('#chatArea').on('shown.bs.collapse', function () {
             document.getElementById("chatBtn").classList.add('bg-success');
             document.getElementById("messagesList").scrollTop = document.getElementById("messagesList").scrollHeight;
         });
-
         $('#chatArea').on('hidden.bs.collapse', function () {
             document.getElementById("chatBtn").classList.remove('bg-success');
         });
+
+        $(document).ready(function () {
+                $.ajax({
+                    url: "@Url.Action("GetMessages", "Chat")",
+                    type: "Get",
+                    data: 'startIndex=3&messagesCount=4',
+                    beforeSend: function () {
+                        document.getElementById("sendButton").disabled = true;
+                    },
+                    success: function (data) {
+                        var msgList = document.getElementById("messagesList");
+
+                        data.forEach(function (msg) {
+                            msgList.appendChild(createMessageElement(msg.user.nickName, msg.text));
+                        });
+
+                        document.getElementById("sendButton").disabled = false;
+                    },
+                    error: function (err) {
+                        alert(err.responseText);
+                    },
+                    complete: function () {
+                        $.LoadingOverlay('hide');
+                    }
+                });
+            });
     </script>
 }

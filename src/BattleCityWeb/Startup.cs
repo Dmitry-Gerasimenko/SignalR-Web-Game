@@ -1,7 +1,10 @@
 using BattleCityWeb.Extensions;
 using BattleCityWeb.Hubs;
+using DAL.Context;
+using DAL.Model.Chat;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -22,6 +25,8 @@ namespace BattleCityWeb
         {
             services.ConfigureChatServices(Configuration);
 
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<CustomApplicationDbContext>();
 
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddSignalR();
@@ -45,6 +50,7 @@ namespace BattleCityWeb
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

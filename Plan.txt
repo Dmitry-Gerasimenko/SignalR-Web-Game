@@ -4,3 +4,13 @@ Separate the solution into layers
 Base game 
 Separate game and its logic with Game Api
 Create another one client app
+
+
+
+Primary fixes:
+	Message refers to the name(nickname) of the user.
+	Check ideas from [ https://github.com/SaveliyKolesnikov/Chat/blob/master/ChatAuth/Controllers/HomeController.cs ]
+
+
+Other:
+	provide client time based-on UTC server time in the messages, logs etc. (When message is created.)

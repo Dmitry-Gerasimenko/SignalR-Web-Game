@@ -13,5 +13,11 @@ namespace DAL.Context
         }
 
         public virtual DbSet<Message> Messages { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseLazyLoadingProxies();
+        }
     }
 }
