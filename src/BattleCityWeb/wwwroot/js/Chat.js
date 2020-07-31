@@ -1,5 +1,5 @@
 ﻿var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
-var createMessageElement = function(userName, message) {
+var createMessageElement = function(userName, message, avatarUrl) {
     let messageElement = document.createElement("div");
         messageElement.classList.add("chat-message");
     let userPhotoElement = document.createElement("div");
@@ -10,10 +10,13 @@ var createMessageElement = function(userName, message) {
         messageSenderElement.classList.add("message-sender");
     let messageTextElement = document.createElement("p");
         messageTextElement.classList.add("message-text");
+    let avatarImg = document.createElement('img');
+        avatarImg.src = avatarUrl;
 
     messageSenderElement.textContent = userName;
     messageTextElement.textContent = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+    userPhotoElement.appendChild(avatarImg);
     messageElement.appendChild(userPhotoElement);
     messageInfoElement.appendChild(messageSenderElement);
     messageInfoElement.appendChild(messageTextElement)
@@ -28,8 +31,8 @@ document.getElementById("sendButton").disabled = true;
 // Remove this const after
 const senderName = 'usernameFromChat.js';
 
-connection.on("ReceiveMessage", function (user, message) {
-    var createdMessageElement = createMessageElement(user, message);
+connection.on("ReceiveMessage", function (user, message, avatarUrl) {
+    var createdMessageElement = createMessageElement(user, message, avatarUrl);
 
     var msgList = document.getElementById("messagesList");
     msgList.appendChild(createdMessageElement);
@@ -38,37 +41,43 @@ connection.on("ReceiveMessage", function (user, message) {
         msgList.scrollTop = msgList.scrollHeight;
     }
     else {
-        soundClick();
-        //alert('Message has received from another people, needed to notify me for ex via bootstrap 4 badge')
+        notifyGetMsg();
+        notifyAboutNewMessage();
     }
 });
 connection.on("NotifyOnConnection", function (messageInfo) {
-    var createdMessageElement = createMessageElement("CONNECTION LISTENER", messageInfo);
+    var createdMessageElement = createMessageElement("Connection listener", messageInfo, '/img/ls1.png');
+    createdMessageElement.classList.add("shadow");
     createdMessageElement.classList.add("bg-light");
 
     var msgList = document.getElementById("messagesList");
     msgList.appendChild(createdMessageElement);
 });
 
-
-connection
-    .start()
-    .then(function () {
-        document.getElementById("sendButton").disabled = false;
-    })
-    .catch(function (err) {
-        return console.error(err.toString());
-    });
+function startChathubConnection() {
+    connection
+        .start()
+        .then(function () {
+            document.getElementById("sendButton").disabled = false;
+        })
+        .catch(function (err) {
+            return console.error(err.toString());
+        });
+}
 
 document.getElementById("sendButton").addEventListener("click", function (event) {
     let msgArea = document.getElementById("messageTextArea");
     let msgText = msgArea.value;
+    if (msgText == '') {
+        msgArea.value = 'please no empty messages';
+    }
+    else {
+        msgArea.value = '';
+        connection.invoke("SendMessage", msgText)
+            .catch(function (err) {
+                return console.error(err.toString());
+            });
 
-    msgArea.value = '';
-    connection.invoke("SendMessage", msgText)
-        .catch(function (err) {
-            return console.error(err.toString());
-        });
-
-    event.preventDefault();
+        event.preventDefault();
+    }
 });

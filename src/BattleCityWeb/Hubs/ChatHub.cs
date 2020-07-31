@@ -27,7 +27,7 @@ namespace BattleCityWeb.Hubs
                 Text = message,
             });;
 
-            await Clients.All.SendAsync("ReceiveMessage", addedMessage.User.NickName, addedMessage.Text);
+            await Clients.All.SendAsync("ReceiveMessage", addedMessage.User.NickName, addedMessage.Text, addedMessage.User.AvatarUrl);
         }
 
         public override async Task OnConnectedAsync()

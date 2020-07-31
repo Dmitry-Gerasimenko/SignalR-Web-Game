@@ -5,11 +5,9 @@ namespace BattleCityWeb.Models.Identity
     public class RegisterViewModel
     {
         [Required(AllowEmptyStrings = false)]
+        [Display(Name = "Include your nickname")]
+        [StringLength(maximumLength: 12, MinimumLength = 3, ErrorMessage = "Nickname: 3..12 characters length")]
         public string NickName { get; set; }
-
-        [Required(AllowEmptyStrings = false)]
-        [EmailAddress]
-        public string Email { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         [DataType(DataType.Password)]

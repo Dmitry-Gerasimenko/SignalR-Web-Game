@@ -1,5 +1,6 @@
 using BattleCityWeb.Extensions;
 using BattleCityWeb.Hubs;
+using CommonComponents.Settings;
 using DAL.Context;
 using DAL.Model.Chat;
 using Microsoft.AspNetCore.Builder;
@@ -25,8 +26,19 @@ namespace BattleCityWeb
         {
             services.ConfigureChatServices(Configuration);
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.Password.RequiredLength = 4;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+
+                options.User.RequireUniqueEmail = false;
+
+            })
                 .AddEntityFrameworkStores<CustomApplicationDbContext>();
+
+            services.Configure<ChatSettings>(Configuration.GetSection(nameof(ChatSettings)));
+            services.Configure<IdentitySettings>(Configuration.GetSection(nameof(IdentitySettings)));
 
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddSignalR();

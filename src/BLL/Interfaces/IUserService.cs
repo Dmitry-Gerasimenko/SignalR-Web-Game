@@ -1,5 +1,6 @@
 ﻿using DAL.Model.Chat;
 using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -21,5 +22,7 @@ namespace BLL.Interfaces
         Task<IdentityResult> AddClaimsAsync(ApplicationUser user, IEnumerable<Claim> claims);
 
         Task<IEnumerable<Claim>> GetUserClaimsAsync(ApplicationUser user);
+
+        Task UpdateMessagesReadingTimeAsync(string userName, DateTime newReadingTime);
     }
 }

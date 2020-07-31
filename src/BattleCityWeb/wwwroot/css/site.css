@@ -1,6 +1,10 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
+.border-purple {
+    border-color: purple;
+}
+
 a.navbar-brand {
   white-space: normal;
   text-align: center;
@@ -109,12 +113,17 @@ body {
     margin-bottom: 15px;
 }
     .chat-message .user-photo {
-        margin: 3px;
+        margin: 5px;
         width: 41px;
         height: 41px;
-        background: #808080;
+        border: 0.2px dotted #e5e5e5;
         border-radius: 50%;
     }
+        .chat-message .user-photo img {
+            width: 100%;
+            height: 100%;
+        }
+
     .chat-message .message-info {
         width: 85%;
         display: flex;

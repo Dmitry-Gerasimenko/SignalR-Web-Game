@@ -61,5 +61,18 @@ namespace BLL.Services
         {
             return await _userManager.GetClaimsAsync(user);
         }
+
+        public async Task UpdateMessagesReadingTimeAsync(string userName, DateTime newReadingTime)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user is null)
+            {
+                return;
+            }
+
+            user.LastMessagesReadingTime = newReadingTime;
+
+            await _userManager.UpdateAsync(user);
+        }
     }
 }

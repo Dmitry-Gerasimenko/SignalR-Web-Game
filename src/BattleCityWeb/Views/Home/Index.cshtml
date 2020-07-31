@@ -1,10 +1,4 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@inject UserManager<DAL.Model.Chat.ApplicationUser> userManager
-@{
-    var userName = (await userManager.GetUserAsync(User))?.NickName;
-    if (string.IsNullOrEmpty(userName))
-        userName = "Anonymous";
-}
 
 @{
     ViewData["Title"] = "Battle City - SignalR";
@@ -20,33 +14,42 @@
                    data-toggle="toggle" data-on="<i class='fa fa-play'></i> Play"
                    data-off="<i class='fa fa-pause'></i> Pause" />
 
-            <button id="chatBtn" style="bottom:3vh; right:2vw; width: 50px; height: 50px; border-radius: 50%;"
-                    data-toggle="collapse" data-target="#chatArea"
-                    aria-expanded="false" aria-controls="chatArea"
-                    class="btn btn-sm btn-outline-light position-absolute">
-                Chat
-            </button>
+            <div style="position:absolute; bottom:3vh; right:2vw;">
+
+                <span id="newMessageBadge" class="badge badge-primary float-right" style="display:none;">
+                    <i class="fa fa-bullhorn" aria-hidden="true"></i>
+                </span>
+
+                <button id="chatBtn" style="width: 60px; height: 60px; border-radius: 50%;"
+                        data-toggle="collapse" data-target="#chatArea"
+                        aria-expanded="false" aria-controls="chatArea"
+                        class="btn btn-sm btn-outline-light">
+
+                    Chat
+                </button>
+            </div>
+
         </div>
 
-        <div id="chatArea" class="bg-light col-4 collapse p-1 h-100">
+        <div id="chatArea" class="bg-light col-4 p-1 h-100 collapse">
             <div class="chatbox">
                 <div id="messagesList" class="messages">
 
-                    <div class="chat-message">
-                        <div class="user-photo"></div>
-                        <div class="message-info">
-                            <p class="message-sender">Чушка</p>
-                            <p class="message-text">
-                                Вошёл в чат. Сделать ajax подгрузку предыдущих логов и сообщ. из get rest api;
-                            </p>
-                        </div>
-                    </div>
+                    <button id="scrollToNewMessgesBtn"
+                            style="position:absolute; bottom:15%; right: 12px;"
+                            class="btn btn-sm btn-light border-purple">
+                        <i class="fa fa-arrow-down" aria-hidden="true"></i>
+                    </button>
+
+                    @* Messages *@
 
                 </div>
                 <div class="message-form">
                     <textarea id="messageTextArea"></textarea>
 
-                    <a id="sendButton" href="##" class="obl"><i class='fa fa-send'></i></a>
+                    <button id="sendButton" type="submit" class="btn btn-lg btn-light m-auto">
+                        <i class="fa fa-send" aria-hidden="true"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -56,54 +59,176 @@
 @section scripts {
 
     <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
-    <script src="~/js/Chat.js"></script>
+    <script src="~/js/chat.js"></script>
 
 
     <script type="text/javascript">
+        var isLoadingBlocked = false;
+        var messagesBatch = 0;
 
-        function getCurrentUserNameWrapper() {
-            return '@userName';
-        };
+        $('#messagesList').scroll(function () {
 
-        function soundClick() {
-            var audio = new Audio();
-            audio.src = "/sounds/print.mp3"; 
-            audio.volume = 0.3;
-            audio.autoplay = true;
-        };
+            if (this.scrollTop == 0 && !isLoadingBlocked) {
+                // block to stop loading spam
+                isLoadingBlocked = true;
 
+                // Save the last position
+                let savedScrollValue = this.scrollHeight;
+
+                // Loading action
+                messagesBatch++;
+                $('.message-form').LoadingOverlay('show');
+                loadMessages(false);
+                $('.message-form').LoadingOverlay('hide');
+                this.scrollTop = this.scrollHeight - savedScrollValue;
+
+                // unblock and show scroll button
+                isLoadingBlocked = false;
+                $('#scrollToNewMessgesBtn').show('slow');
+            }
+
+            if (this.offsetHeight + this.scrollTop >= this.scrollHeight) {
+                $('#scrollToNewMessgesBtn').hide();
+            }
+        });
+
+        $('#scrollToNewMessgesBtn').on('click', function () {
+
+            document.getElementById('messagesList').scrollTop = document.getElementById('messagesList').scrollHeight;
+            if ($(this).hasClass('bg-danger')) {
+                $(this).removeClass('bg-danger')
+            }
+        });
         $('#chatArea').on('shown.bs.collapse', function () {
+
+            $('#newMessageBadge').hide('slow');
+            $('#scrollToNewMessgesBtn').hide('fast');
             document.getElementById("chatBtn").classList.add('bg-success');
             document.getElementById("messagesList").scrollTop = document.getElementById("messagesList").scrollHeight;
+            notifyServerMessagesRead();
         });
         $('#chatArea').on('hidden.bs.collapse', function () {
             document.getElementById("chatBtn").classList.remove('bg-success');
+            notifyServerMessagesRead();
+        });
+        $('#messageTextArea').on('keypress', function (event) {
+
+            if (event.keyCode == 13 && !event.shiftKey) {
+                event.preventDefault();
+
+                document.getElementById("sendButton").click();
+            }
         });
 
         $(document).ready(function () {
+
+            loadMessages(true);
+            startChathubConnection();
+        });
+
+        function loadMessages(isAsync) {
+
+            $.ajax({
+                async: isAsync,
+                url: "@Url.Action("GetMessages", "Chat")",
+                type: "Get",
+                data: { messagesBatch: messagesBatch },
+                dataType: 'json',
+                beforeSend: function () {
+                    document.getElementById("sendButton").disabled = true;
+                },
+                success: function (data) {
+                    var msgList = document.getElementById("messagesList");
+
+                    for (let i = data.length - 1; i >= 0; i--) {
+                        msgList.prepend(createMessageElement(data[i].user.nickName, data[i].text, data[i].user.avatarUrl));
+                    };
+                    document.getElementById("sendButton").disabled = false;
+                },
+                error: function (err) {
+                    alert('ERROR' + err.responseText);
+                },
+                complete: function () {
+                }
+            });
+        }
+
+        function getCurrentUserNameWrapper() {
+
+            let userName = '@User.Identity.Name';
+            return userName !== '' ? userName : 'anonymous';
+        };
+
+        function notifyGetMsg() {
+
+            var audio = new Audio();
+            audio.src = "/sounds/getMsg.mp3";
+            audio.volume = 0.5;
+            audio.autoplay = true;
+        };
+
+        function notifyAboutNewMessage() {
+            $('#scrollToNewMessgesBtn').show('slow');
+
+            if (!$('#chatArea').hasClass('show')) {
+                $('#newMessageBadge').show('slow');
+            } else {
+                if (!$('#scrollToNewMessgesBtn').hasClass('bg-danger')) {
+                    !$('#scrollToNewMessgesBtn').addClass('bg-danger')
+                }
+            }
+        }
+
+        function notifyServerMessagesRead() {
+
+            $.ajax({
+                    url: "@Url.Action("PatchUserMessagesReadingTime", "Account")",
+                    type: "Patch",
+                    dataType: 'json',
+                    data: { userName: getCurrentUserNameWrapper() }
+                });
+        }
+
+    </script>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+                checkUnreadedMessages();
+            });
+
+            function checkUnreadedMessages() {
+
                 $.ajax({
-                    url: "@Url.Action("GetMessages", "Chat")",
+                    url: "@Url.Action("CheckUnreadedMessages", "Chat")",
                     type: "Get",
-                    data: 'startIndex=3&messagesCount=4',
+                    data: { userName: getCurrentUserNameWrapper() },
+                    dataType: 'json',
                     beforeSend: function () {
-                        document.getElementById("sendButton").disabled = true;
                     },
                     success: function (data) {
-                        var msgList = document.getElementById("messagesList");
-
-                        data.forEach(function (msg) {
-                            msgList.appendChild(createMessageElement(msg.user.nickName, msg.text));
-                        });
-
-                        document.getElementById("sendButton").disabled = false;
+                        if (data == true) {
+                            $('#newMessageBadge').show('slow');
+                            $('#newMessageBadge').addClass('bg-danger');
+                            setTimeout(removeDangerFromBadge, 10000);
+                        }
                     },
                     error: function (err) {
-                        alert(err.responseText);
+                        alert('ERROR' + err.responseText);
                     },
                     complete: function () {
-                        $.LoadingOverlay('hide');
                     }
                 });
-            });
-    </script>
+            }
+
+            function removeDangerFromBadge() {
+                if ($('#newMessageBadge').hasClass('bg-danger')) {
+                    $('#newMessageBadge').removeClass('bg-danger');
+                }
+            }
+        </script>
+        }
+    }
 }

@@ -6,11 +6,12 @@ using DAL.Model.Chat;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BLL.Services
 {
-    public class MessagesService : ServiceBase<MessageDto>
+    public class MessagesService : ServiceBase<MessageDto>, IMessageService
     {
         private readonly IRepository<Message> _messagesRepository;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -40,6 +41,13 @@ namespace BLL.Services
             });
 
             return _mapper.Map<MessageDto>(addedMessage);
+        }
+
+        public async Task<bool> UserHasUnreadedMessages(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+
+            return (await _messagesRepository.GetAllAsync()).LastOrDefault()?.CreationDate > user?.LastMessagesReadingTime;
         }
 
         public override async Task Delete(MessageDto item)

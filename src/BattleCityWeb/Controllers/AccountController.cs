@@ -1,9 +1,12 @@
 ﻿using BattleCityWeb.Models.Identity;
 using BLL.Interfaces;
+using CommonComponents.Settings;
 using DAL.Model.Chat;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using System;
 using System.Threading.Tasks;
 
 namespace BattleCityWeb.Controllers
@@ -11,12 +14,15 @@ namespace BattleCityWeb.Controllers
     public class AccountController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IOptions<IdentitySettings> _identitySettings;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
         public AccountController(IUserService userService,
+            IOptions<IdentitySettings> identitySettings,
             SignInManager<ApplicationUser> signInManager)
         {
             _userService = userService;
+            _identitySettings = identitySettings;
             _signInManager = signInManager;
 
         }
@@ -34,7 +40,13 @@ namespace BattleCityWeb.Controllers
                 return View(model);
             }
 
-            var user = new ApplicationUser { NickName = model.NickName, Email = model.Email, UserName = model.Email, };
+            var user = new ApplicationUser
+            {
+                Email = _identitySettings.Value.DefaultMockUsersEmail,
+                NickName = model.NickName,
+                UserName = model.NickName,
+                AvatarUrl = GenerateAvatarUrl(model.NickName),
+            };
 
             var result = await _userService.CreateUserAsync(user, model.Password);
             if (result.Succeeded)
@@ -86,6 +98,15 @@ namespace BattleCityWeb.Controllers
             return View(model);
         }
 
+
+        [HttpPatch]
+        public async Task<IActionResult> PatchUserMessagesReadingTime(string userName)
+        {
+            await _userService.UpdateMessagesReadingTimeAsync(userName, DateTime.UtcNow);
+
+            return Ok();
+        }
+
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Logout()
@@ -101,6 +122,16 @@ namespace BattleCityWeb.Controllers
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
+        }
+
+        private string GenerateAvatarUrl(string userName)
+        {
+            if (userName.ToLower().Contains("dima"))
+            {
+                return "/img/ab5.png";
+            }
+
+            return $"/img/ab{new Random().Next(1, 5)}.png";
         }
     }
 }
