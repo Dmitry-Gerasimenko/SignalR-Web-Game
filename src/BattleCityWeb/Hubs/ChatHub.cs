@@ -1,16 +1,53 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Threading.Tasks;
+using BLL.Interfaces;
+using Microsoft.AspNetCore.SignalR;
+using CommonComponents.CommonModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BattleCityWeb.Hubs
 {
     public class ChatHub : Hub
     {
-        public async Task SendMessage(string user, string message)
+        private readonly IService<MessageDto> _messagesService;
+
+        public ChatHub(IService<MessageDto> messagesService)
         {
-            await Clients.All.SendAsync("ReceiveMessage", user, message);
+            _messagesService = messagesService;
+        }
+
+        [Authorize]
+        public async Task SendMessage(string message)
+        {
+            // TODO: use try-catch
+            var addedMessage = await _messagesService.AddAsync(new MessageDto
+            {
+                CreationDate = DateTime.UtcNow,
+                ApplicationUserId = Context.UserIdentifier,
+                Text = message,
+            });;
+
+            await Clients.All.SendAsync("ReceiveMessage", addedMessage.User.NickName, addedMessage.Text, addedMessage.User.AvatarUrl);
+        }
+
+        public override async Task OnConnectedAsync()
+        {
+            if (Context.User.Identity.IsAuthenticated)
+            {
+                await Clients.All.SendAsync("NotifyOnConnection", $"{Context.User.Identity.Name} connected.");
+            }
+
+            await base.OnConnectedAsync();
+        }
+
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            if (Context.User.Identity.IsAuthenticated)
+            {
+                await Clients.All.SendAsync("NotifyOnConnection", $"{Context.User.Identity.Name} disconnected.");
+            }
+
+            await base.OnDisconnectedAsync(exception);
         }
     }
 }

@@ -25,10 +25,8 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    @* Auth controls  TODO: Make as a partial view like a SCOCS*@
-                    <ul class="navbar-nav flex-grow-0">
-                        <li class="nav-item">Login feature</li>
-                    </ul>
+                    @* Auth controls *@
+                    <partial name="_IdentityControlsPartial" />
 
 
                     @* Controls*@
@@ -63,12 +61,11 @@
 
     @* R-Made physical libraties *@
     <script src="~/lib/jquery/jquery.min.js"></script>
-    <script src="~/lib/jquery/jquery.slim.js"></script>
     <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
 
     @* R-Made hosted libraries *@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.6/dist/loadingoverlay.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-loading-overlay/2.1.7/loadingoverlay.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
 
     @* Custom libraries *@
