@@ -30,16 +30,24 @@
 
 
                     @* Controls*@
-                <ul class="navbar-nav flex-grow-1">
-                    <li class="nav-item">
-                        <a href="#actionArea" class="nav-link text-dark">Play Now!</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Logs"
-                           asp-action="Index">Logs</a>
-                    </li>
-                </ul>
-
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item counter p-2 shadow-sm">
+                            <i class="fa fa-user m-1"></i> 
+                            <i class="font-weight-lighter">Online users: </i>
+                            <i id="usersCounter"></i> 
+                            <i class="font-weight-lighter">.   Authorized: </i>
+                            <i id="authCounter"></i>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a href="#actionArea" class="nav-link text-dark">Play Now!</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Logs"
+                               asp-action="Index">Logs</a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </nav>
@@ -62,6 +70,7 @@
     @* R-Made physical libraties *@
     <script src="~/lib/jquery/jquery.min.js"></script>
     <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
 
     @* R-Made hosted libraries *@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
@@ -70,6 +79,7 @@
 
     @* Custom libraries *@
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/usersCounter.js"></script>
 
     @RenderSection("Scripts", required: false)
 </body>
