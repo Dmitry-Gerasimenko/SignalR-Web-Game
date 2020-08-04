@@ -9,7 +9,7 @@ userCounterConnection.on("NotifyClientsCounter", function (clientsCounter, autho
 userCounterConnection
     .start()
     .then(function () {
-        // starting logic
+        console.dir('USERS COUNTER CONNECTION STARTED')
     })
     .catch(function (err) {
         return console.error(err.toString());

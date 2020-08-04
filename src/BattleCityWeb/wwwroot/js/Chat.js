@@ -59,6 +59,7 @@ function startChathubConnection() {
         .start()
         .then(function () {
             document.getElementById("sendButton").disabled = false;
+            console.dir('CHAT CONNECTION STARTED')
         })
         .catch(function (err) {
             return console.error(err.toString());
@@ -66,8 +67,10 @@ function startChathubConnection() {
 }
 
 document.getElementById("sendButton").addEventListener("click", function (event) {
+
     let msgArea = document.getElementById("messageTextArea");
     let msgText = msgArea.value;
+
     if (msgText == '') {
         msgArea.value = 'please no empty messages';
     }

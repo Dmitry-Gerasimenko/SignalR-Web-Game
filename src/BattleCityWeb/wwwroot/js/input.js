@@ -1,25 +1,69 @@
 ﻿
 class InputHanlder {
 
-    constructor(tank) {
+    constructor(gameObjects, gameConnection, userName) {
+
         document.addEventListener('keydown', (event) => {
-            console.dir(event.keyCode)
-            switch (event.keyCode) {
+
+            gameConnection.invoke("HandleClientKeyDown", userName, event.keyCode)
+                .catch(function (err) {
+                    return console.error(err.toString());
+                });
+
+        });
+        document.addEventListener('keyup', (event) => {
+            gameConnection.invoke("HandleClientKeyUp", userName, event.keyCode)
+                .catch(function (err) {
+                    return console.error(err.toString());
+                });
+        });
+
+        gameConnection.on("ReceiveHandledKeyDown", function (tankId, pressedKeyId) {
+            let tankToMove = gameObjects.find(obj => obj.tankId === tankId);
+
+            switch (pressedKeyId) {
                 // w
                 case 87:
-                    tank.moveUp();
+                    tankToMove.run();
+                    tankToMove.moveUp();
                     break;
                 // s
                 case 83:
-                    tank.moveDown();
+                    tankToMove.run();
+                    tankToMove.moveDown();
                     break;
                 // a
                 case 65:
-                    tank.moveLeft();
+                    tankToMove.run();
+                    tankToMove.moveLeft();
                     break;
                 // d
                 case 68:
-                    tank.moveRight();
+                    tankToMove.run();
+                    tankToMove.moveRight();
+                    break;
+            }
+        });
+
+        gameConnection.on("ReceiveHandledKeyUp", function (tankId, pressedKeyId) {
+            let tankToStop = gameObjects.find(obj => obj.tankId === tankId);
+
+            switch (pressedKeyId) {
+                // w
+                case 87:
+                    tankToStop.stop();
+                    break;
+                // s
+                case 83:
+                    tankToStop.stop();
+                    break;
+                // a
+                case 65:
+                    tankToStop.stop();
+                    break;
+                // d
+                case 68:
+                    tankToStop.stop();
                     break;
             }
         });

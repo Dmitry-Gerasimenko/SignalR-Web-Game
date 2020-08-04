@@ -1,26 +1,22 @@
 ﻿
 class Game {
 
-    constructor(gameWidth, gameHeight) {
+    constructor(gameWidth, gameHeight, userName) {
         this.gameWidth = gameWidth;
         this.gameHeight = gameHeight;
+        this.userName = userName;
+
+        this.gameObjects = [];      
     }
 
-
-    start() {
-        this.tank = new Tank(this);
-
-        new InputHanlder(this.tank);
-    }
 
     update(deltaTime) {
 
-        //this.tank.update(deltaTime);
+        this.gameObjects.forEach(obj => obj.update(deltaTime));
     }
 
     draw(ctx) {
-
-        this.tank.draw(ctx);
+        this.gameObjects.forEach(obj => obj.draw(ctx));
     }
 }
 

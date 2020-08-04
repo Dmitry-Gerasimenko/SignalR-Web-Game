@@ -57,6 +57,16 @@
 @section scripts {
     <script src="~/js/chat.js"></script>
 
+    @* WRAPPER SCRIPTS TO ACESS RAZOR CAPABILITITES*@
+    <script type="text/javascript">
+
+        function getCurrentUserNameWrapper() {
+
+            let userName = '@User.Identity.Name';
+            return userName !== '' ? userName : 'anonymous';
+        };
+    </script>
+
     <script  src="~/js/tank.js"></script>
     <script  src="~/js/input.js"></script>
     <script  src="~/js/game.js"></script>
@@ -156,12 +166,6 @@
                 }
             });
         }
-
-        function getCurrentUserNameWrapper() {
-
-            let userName = '@User.Identity.Name';
-            return userName !== '' ? userName : 'anonymous';
-        };
 
         function notifyGetMsg() {
 

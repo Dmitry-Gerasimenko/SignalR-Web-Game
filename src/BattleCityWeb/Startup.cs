@@ -25,6 +25,7 @@ namespace BattleCityWeb
         public void ConfigureServices(IServiceCollection services)
         {
             services.ConfigureChatServices(Configuration);
+            services.ConfigureGameServices(Configuration);
 
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
@@ -69,6 +70,7 @@ namespace BattleCityWeb
             {
                 endpoints.MapHub<ChatHub>("/chathub");
                 endpoints.MapHub<UsersHub>("/usershub");
+                endpoints.MapHub<GameHub>("/gamehub");
 
                 endpoints.MapControllerRoute(
                     name: "default",

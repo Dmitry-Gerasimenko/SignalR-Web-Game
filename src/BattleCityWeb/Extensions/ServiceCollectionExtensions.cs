@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BattleCityWeb.GameServices;
 using BLL.Interfaces;
 using BLL.Utils;
 using DAL.Context;
@@ -42,6 +43,19 @@ namespace BattleCityWeb.Extensions
                             .UsingRegistrationStrategy(RegistrationStrategy.Skip)
                             .AsImplementedInterfaces()
                             .WithTransientLifetime();
+            });
+        }
+
+        public static void ConfigureGameServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            // Custom services registration.
+            services.Scan(scan =>
+            {
+                scan.FromAssembliesOf(typeof(IGameService))
+                        .AddClasses(classes => classes.AssignableTo(typeof(IGameService)))
+                            .AsImplementedInterfaces()
+                            .WithTransientLifetime();
+                        
             });
         }
     }
