@@ -1,7 +1,7 @@
 ﻿
 class Tank {
 
-    constructor(game, tankId, position, tankDirection) {
+    constructor(game, tankId, position, tankDirection, maxSoundVolume) {
         this.tankId = tankId;
 
         this.gameWidth = game.gameWidth;
@@ -20,10 +20,12 @@ class Tank {
 
         this.runSound = document.createElement('audio');
         this.runSound.src = '/sounds/game/run.wav';
-        this.runSound.volume = 0.3;
+        this.runSound.volume = maxSoundVolume;
         this.stopSound = document.createElement('audio');
-        this.stopSound.src = '/sounds/game/stop.wav';
-        this.stopSound.volume = 0.15;
+        this.stopSound.src = '/sounds/game/stop_impr.wav';
+        this.stopSound.volume = maxSoundVolume / 3;
+
+        this.shootSprite = new ExplosionSprite();
     }
 
     draw(ctx) {
@@ -46,6 +48,8 @@ class Tank {
                 this.drawImage(ctx, this.turretImage, this.position.x, this.position.y + 17, Math.PI * 1.5);
                 break;
         }
+
+        this.shootSprite.draw(ctx);
     }
 
     update() {
@@ -58,6 +62,7 @@ class Tank {
     }
     stop() {
         this.runSound.pause();
+        this.stopSound.currentTime = 0;
         this.stopSound.play();
     }
 

@@ -6,7 +6,7 @@ class Game {
         this.gameHeight = gameHeight;
         this.userName = userName;
 
-        this.gameObjects = [];      
+        this.gameObjects = [];  
     }
 
 

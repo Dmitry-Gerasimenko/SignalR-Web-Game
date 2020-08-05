@@ -44,7 +44,6 @@ class InputHanlder {
                     break;
             }
         });
-
         gameConnection.on("ReceiveHandledKeyUp", function (tankId, pressedKeyId) {
             let tankToStop = gameObjects.find(obj => obj.tankId === tankId);
 

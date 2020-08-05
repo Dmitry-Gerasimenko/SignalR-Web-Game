@@ -5,7 +5,6 @@ Base game
 Separate game and its logic with Game Api
 Create another one client app
 
-Танки врагов тише звуком при создании экземпляра.
 
 Other:
 	provide client time based-on UTC server time in the messages, logs etc. (When message is created.)
