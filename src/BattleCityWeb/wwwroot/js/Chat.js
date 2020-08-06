@@ -28,9 +28,7 @@ var createMessageElement = function(userName, message, avatarUrl) {
 //Disable send button until connection is established
 document.getElementById("sendButton").disabled = true;
 
-// Remove this const after
-const senderName = 'usernameFromChat.js';
-
+// Subscribe to events
 connection.on("ReceiveMessage", function (user, message, avatarUrl) {
     var createdMessageElement = createMessageElement(user, message, avatarUrl);
 
@@ -66,6 +64,7 @@ function startChathubConnection() {
         });
 }
 
+// Add event listeners
 document.getElementById("sendButton").addEventListener("click", function (event) {
 
     let msgArea = document.getElementById("messageTextArea");

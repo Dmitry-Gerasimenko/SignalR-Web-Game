@@ -36,6 +36,11 @@ namespace BattleCityWeb.Hubs
             await Clients.All.SendAsync("ReceiveHandledKeyUp", userName + "Tank", keyCode);
         }
 
+        public async Task HandleClientMouseDown(string userName, int clientX, int clientY)
+        {
+            await Clients.All.SendAsync("ReceiveHandledMouseDown", userName + "Tank", clientX, clientY);
+        }
+
         public override async Task OnConnectedAsync()
         {
             if (Context.User.Identity.IsAuthenticated)

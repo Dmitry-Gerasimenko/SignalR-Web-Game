@@ -1,6 +1,6 @@
 ﻿
 class ExplosionSprite {
-    constructor() {
+    constructor(x, y, xv, yv) {
         this.frameCount = 0;
         this.spritesCount = 15;
 
@@ -140,10 +140,14 @@ class ExplosionSprite {
         this.explosionImg = new Image();
         this.explosionImg.src = '/img/explosion_impr.png';
 
-        this.position = {
-            x: 10,
-            y: 20
-        }
+        this.x = x;
+        this.y = y;
+        this.xv = xv;
+        this.yv = yv;
+
+        this.dist = 0;
+
+        this.size = 128;
     }
 
     draw(ctx) {
@@ -151,9 +155,9 @@ class ExplosionSprite {
         ctx.drawImage(this.explosionImg,
             this.explosionAnimation[this.frameCount % this.spritesCount].position.x,
             this.explosionAnimation[this.frameCount % this.spritesCount].position.y,
-            128, 128,
-            this.position.x, this.position.y,
-            128, 128);
+            this.size, this.size,
+            this.x, this.y,
+            this.size, this.size);
 
         this.frameCount++;
     }

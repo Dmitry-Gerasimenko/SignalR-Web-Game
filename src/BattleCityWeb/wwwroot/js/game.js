@@ -9,12 +9,6 @@ class Game {
         this.gameObjects = [];  
     }
 
-
-    update(deltaTime) {
-
-        this.gameObjects.forEach(obj => obj.update(deltaTime));
-    }
-
     draw(ctx) {
         this.gameObjects.forEach(obj => obj.draw(ctx));
     }

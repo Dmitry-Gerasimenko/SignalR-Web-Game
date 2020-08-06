@@ -57,7 +57,7 @@
 @section scripts {
     <script src="~/js/chat.js"></script>
 
-    @* WRAPPER SCRIPTS TO ACESS RAZOR CAPABILITITES*@
+    @* RAZOR SCRIPTS WRAPPER *@
     <script type="text/javascript">
 
         function getCurrentUserNameWrapper() {
@@ -72,7 +72,7 @@
     <script src="~/js/game.js"></script>
     <script src="~/js/gameEngine.js"></script>
 
-
+    @* MAIN PAGE SCRIPT *@
     <script type="text/javascript">
         var isLoadingBlocked = false;
         var messagesBatch = 0;
@@ -199,6 +199,7 @@
 
     </script>
 
+    @* AUTHORIZED USERS SCRIPTS *@
     @if (User.Identity.IsAuthenticated)
     {
         <script type="text/javascript">

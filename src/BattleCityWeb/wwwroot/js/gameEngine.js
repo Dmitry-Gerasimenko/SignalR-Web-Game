@@ -1,4 +1,34 @@
-﻿let gameConnection = new signalR.HubConnectionBuilder().withUrl("/gamehub").build();
+﻿const FPS = 45;
+const BULLET_MAX = 3;
+const BULLET_SPEED = 15; // pixeles per second
+const BULLET_DIST = 0.6; // max dist of the bullet flying
+
+let gameConnection = new signalR.HubConnectionBuilder().withUrl("/gamehub").build();
+gameConnection.on("InitiateGame", function () {
+
+    gameConnection.invoke("InitGameObjects", game.gameWidth, game.gameHeight)
+        .catch(function (err) {
+            return console.error(err.toString());
+        });
+});
+gameConnection.on("InitGameObjects", function (initialGameObjects) {
+
+    game.gameObjects = [];
+    for (let i = 0; i < initialGameObjects.length; i++) {
+        let maxSoundVolume = initialGameObjects[i].tankId === game.userName + "Tank" ? 0.6 : 0.3;
+
+        game.gameObjects.push(new Tank(
+            game,
+            initialGameObjects[i].tankId,
+            initialGameObjects[i].position,
+            initialGameObjects[i].direction,
+            maxSoundVolume
+        ))
+    }
+
+    let myTank = game.gameObjects.find(obj => obj.tankId === getCurrentUserNameWrapper() + 'Tank');
+    new InputHanlder(game.gameObjects, gameConnection, game.userName, myTank);
+});
 
 let canvas = document.getElementById('gameCanvas');
 canvas.width = canvas.clientWidth;
@@ -19,7 +49,6 @@ function gameLoop(timeStamp) {
 
     ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-    game.update(deltaTime);
     game.draw(ctx);  
     
     ///////////////////////////////
@@ -56,28 +85,4 @@ function handleResize() {
     game.gameHeight = GAME_HEIGHT;
 };
 
-gameConnection.on("InitiateGame", function () {
-
-    gameConnection.invoke("InitGameObjects", game.gameWidth, game.gameHeight)
-        .catch(function (err) {
-            return console.error(err.toString());
-        });
-});
-gameConnection.on("InitGameObjects", function (initialGameObjects) {
-
-    game.gameObjects = [];
-    for (let i = 0; i < initialGameObjects.length; i++) {
-        let maxSoundVolume = initialGameObjects[i].tankId === game.userName + "Tank" ? 0.6 : 0.3;
-
-        game.gameObjects.push(new Tank(
-            game,
-            initialGameObjects[i].tankId,
-            initialGameObjects[i].position,
-            initialGameObjects[i].direction,
-            maxSoundVolume
-        ))
-    }
-
-    new InputHanlder(game.gameObjects, gameConnection, game.userName);
-});
 
