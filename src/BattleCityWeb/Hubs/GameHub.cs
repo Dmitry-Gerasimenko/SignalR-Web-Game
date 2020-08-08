@@ -22,8 +22,14 @@ namespace BattleCityWeb.Hubs
         public async Task InitGameObjects(int canvasWidth, int canvasHeight)
         {
             var usersList = _activePlayers.Select(p => p.Value);
+            var gameObjects = new
+            {
+                brickMap = _gameService.GetInitalBrickMap(),
+                tanks = _gameService.GetInitialTanks(usersList, canvasWidth, canvasHeight),
+            };
 
-            await Clients.All.SendAsync("InitGameObjects", _gameService.GetInitialTanks(usersList, canvasWidth, canvasHeight));
+
+            await Clients.All.SendAsync("InitGameObjects", gameObjects);
         }
 
         public async Task HandleClientKeyDown(string userName, int keyCode)

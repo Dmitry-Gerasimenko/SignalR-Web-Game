@@ -13,19 +13,42 @@ gameConnection.on("InitiateGame", function () {
 });
 gameConnection.on("InitGameObjects", function (initialGameObjects) {
 
+    console.dir(initialGameObjects)
+    // Clear the objects before an init
     game.gameObjects = [];
-    for (let i = 0; i < initialGameObjects.length; i++) {
-        let maxSoundVolume = initialGameObjects[i].tankId === game.userName + "Tank" ? 0.6 : 0.3;
+
+    // Initialize some tanks
+    for (let i = 0; i < initialGameObjects.tanks.length; i++) {
+        let maxSoundVolume = initialGameObjects.tanks[i].tankId === game.userName + "Tank" ? 0.6 : 0.3;
 
         game.gameObjects.push(new Tank(
             game,
-            initialGameObjects[i].tankId,
-            initialGameObjects[i].position,
-            initialGameObjects[i].direction,
+            initialGameObjects.tanks[i].tankId,
+            initialGameObjects.tanks[i].position,
+            initialGameObjects.tanks[i].direction,
             maxSoundVolume
-        ))
+        ));
     }
+    // Create bricks from briks map
+    initialGameObjects.brickMap.forEach((row, rowIndex) => {
+        alert(row)
+        console.dir(row);
+        row.forEach((brick, brickIndex) => {
 
+            if (brick === 1) {
+                alert('4')
+                let position = {
+                    x: 64 * brickIndex,
+                    y: 20 + 64 * rowIndex
+                };
+                alert('ok new brick')
+                game.gameObjects.push(new Brick(position));
+            }
+        });
+    });
+
+    console.dir('game objects:')
+    console.dir(game.gameObjects)
     let myTank = game.gameObjects.find(obj => obj.tankId === getCurrentUserNameWrapper() + 'Tank');
     new InputHanlder(game.gameObjects, gameConnection, game.userName, myTank);
 });

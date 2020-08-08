@@ -6,6 +6,8 @@ class Game {
         this.gameHeight = gameHeight;
         this.userName = userName;
 
+        this.brickImage = new Image(64, 64);
+
         this.gameObjects = [];  
     }
 

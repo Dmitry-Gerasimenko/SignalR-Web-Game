@@ -86,8 +86,8 @@ class Tank {
         if (this.canShoot && this.bullets.length < BULLET_MAX) {
 
             this.bullets.push(new ExplosionSprite(
-                this.position.x - this.tankImage.width/2,
-                this.position.y - this.tankImage.height/2,
+                this.position.x - this.tankImage.width,
+                this.position.y - this.tankImage.height,
                 vx, vy));
         }
 

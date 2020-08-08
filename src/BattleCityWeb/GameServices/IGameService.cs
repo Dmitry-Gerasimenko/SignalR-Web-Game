@@ -7,6 +7,6 @@ namespace BattleCityWeb.GameServices
     {
         IEnumerable<Tank> GetInitialTanks(IEnumerable<string> connectedUsers, int canvasWidth, int canvasHeight);
 
-        IEnumerable<Block> GetInitalBlocks();
+        int[,] GetInitalBrickMap();
     }
 }

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace BattleCityWeb.Models.GameModels
+﻿namespace BattleCityWeb.Models.GameModels
 {
     public class Block
     {
+        public Position Position { get; set; }
     }
 }

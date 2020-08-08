@@ -1,17 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using BattleCityWeb.Models.GameModels;
 
 namespace BattleCityWeb.GameServices
 {
     public class GameService : IGameService
     {
-       public const int canvasBounds = 50;
+        public const int CanvasBounds = 70;
+        public const int BricksMapSize = 10;
 
-        public IEnumerable<Block> GetInitalBlocks()
+        public int[,] GetInitalBrickMap()
         {
-            throw new NotImplementedException();
+            var initialBrickMapArray = new int[BricksMapSize, BricksMapSize];
+            var random = new Random();
+
+            for (int i = 0; i < BricksMapSize; i++)
+            {
+                for (int j = 0; j < BricksMapSize; j++)
+                {
+                    initialBrickMapArray[i, j] = random.Next(0, 2);
+                }
+            }
+
+            return initialBrickMapArray;
         }
 
         public IEnumerable<Tank> GetInitialTanks(IEnumerable<string> connectedUsers, int canvasWidth, int canvasHeight)
@@ -27,8 +38,8 @@ namespace BattleCityWeb.GameServices
                     Direction = (TankDirection)random.Next(0, dirCount),
                     Position = new Position
                     {
-                        X = random.Next(canvasBounds, canvasWidth - canvasBounds),
-                        Y = random.Next(canvasBounds / 2, canvasHeight - canvasBounds / 2),
+                        X = random.Next(CanvasBounds, canvasWidth - CanvasBounds),
+                        Y = random.Next(CanvasBounds / 2, canvasHeight - CanvasBounds / 2),
                     },
                     TankId = userName + "Tank",
                 });
