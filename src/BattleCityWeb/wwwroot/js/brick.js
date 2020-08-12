@@ -1,7 +1,7 @@
 ﻿
 class Brick {
 
-    constructor(game, position) {
+    constructor(position) {
         this.image = game.brickImage;
         this.size = 64;
 

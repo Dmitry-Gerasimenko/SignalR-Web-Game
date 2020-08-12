@@ -61,6 +61,15 @@ class Tank {
         // move the bullets
         for (let i = this.bullets.length - 1; i >= 0; i--) {
 
+            // check de collisions with another game objects
+            game.gameObjects.forEach((gameObject) => {
+
+                if (detectShootingCollision(this.bullets[i], gameObject)) {
+                    console.dir(gameObject)
+                    alert('collision detected with object: ')
+                }
+            });
+
             // check the distance travelled 
             if (this.bullets[i].dist > BULLET_DIST * canvas.width) {
 
@@ -72,7 +81,6 @@ class Tank {
             this.bullets[i].x += this.bullets[i].xv;
             this.bullets[i].y += this.bullets[i].yv;
 
-            
             // and calculate the distance travelled
             this.bullets[i].dist += Math.sqrt(Math.pow(this.bullets[i].xv, 2) + Math.pow(this.bullets[i].yv, 2));
         }
@@ -82,7 +90,10 @@ class Tank {
         this.turretToAngle = Math.atan2(ny - this.position.y, nx - this.position.x);
     }
 
-    makeShoot(vx, vy) {
+    makeShoot(vx, vy, newTurretAngle) {
+
+        this.turretToAngle = newTurretAngle;
+
         if (this.canShoot && this.bullets.length < BULLET_MAX) {
 
             this.bullets.push(new ExplosionSprite(

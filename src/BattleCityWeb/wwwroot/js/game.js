@@ -7,6 +7,7 @@ class Game {
         this.userName = userName;
 
         this.brickImage = new Image(64, 64);
+        this.brickImage.src = '/img/brick.png';
 
         this.gameObjects = [];  
     }

@@ -9,16 +9,23 @@ namespace BattleCityWeb.GameServices
         public const int CanvasBounds = 70;
         public const int BricksMapSize = 10;
 
-        public int[,] GetInitalBrickMap()
+        public int[][] GetInitalBrickMap()
         {
-            var initialBrickMapArray = new int[BricksMapSize, BricksMapSize];
+            int[][] initialBrickMapArray = new int[BricksMapSize][];
             var random = new Random();
 
-            for (int i = 0; i < BricksMapSize; i++)
+            // Prepare a jagged array
+            for(int i = 0; i < initialBrickMapArray.Length; i++)
             {
-                for (int j = 0; j < BricksMapSize; j++)
+                initialBrickMapArray[i] = new int[BricksMapSize];
+            }
+
+            // Initialize an array with values in range 0...1
+            for (int i = 0; i < BricksMapSize; i += 2)
+            {
+                for (int j = 0; j < BricksMapSize; j += 2)
                 {
-                    initialBrickMapArray[i, j] = random.Next(0, 2);
+                    initialBrickMapArray[i][j] = random.Next(0, 2);
                 }
             }
 

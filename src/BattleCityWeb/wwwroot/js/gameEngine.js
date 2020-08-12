@@ -11,9 +11,8 @@ gameConnection.on("InitiateGame", function () {
             return console.error(err.toString());
         });
 });
-gameConnection.on("InitGameObjects", function (initialGameObjects) {
+gameConnection.on("InitGameObjects", function (initialGameObjects, initialCanvasWidth, initialCanvasHeight) {
 
-    console.dir(initialGameObjects)
     // Clear the objects before an init
     game.gameObjects = [];
 
@@ -29,26 +28,24 @@ gameConnection.on("InitGameObjects", function (initialGameObjects) {
             maxSoundVolume
         ));
     }
+
+    let widthCoefficient = initialCanvasWidth / 10;
+    let heightCoefficient = initialCanvasHeight / 10;
     // Create bricks from briks map
     initialGameObjects.brickMap.forEach((row, rowIndex) => {
-        alert(row)
-        console.dir(row);
         row.forEach((brick, brickIndex) => {
 
             if (brick === 1) {
-                alert('4')
                 let position = {
-                    x: 64 * brickIndex,
-                    y: 20 + 64 * rowIndex
+                    x: widthCoefficient * brickIndex ,
+                    y: 20 + heightCoefficient * rowIndex
                 };
-                alert('ok new brick')
+
                 game.gameObjects.push(new Brick(position));
             }
         });
     });
 
-    console.dir('game objects:')
-    console.dir(game.gameObjects)
     let myTank = game.gameObjects.find(obj => obj.tankId === getCurrentUserNameWrapper() + 'Tank');
     new InputHanlder(game.gameObjects, gameConnection, game.userName, myTank);
 });

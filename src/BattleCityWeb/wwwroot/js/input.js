@@ -6,7 +6,7 @@ class InputHanlder {
 
         document.addEventListener('mousedown', (event) => {
 
-            gameConnection.invoke("HandleClientMouseDown", userName, event.clientX, event.clientY)
+            gameConnection.invoke("HandleClientMouseDown", userName, event.clientX, event.clientY, myTank.turretToAngle)
                 .catch(function (err) {
                     return console.error(err.toString());
                 });
@@ -77,12 +77,12 @@ class InputHanlder {
                     break;
             }
         });
-        gameConnection.on("ReceiveHandledMouseDown", function (tankId, clientX, clientY) {
+        gameConnection.on("ReceiveHandledMouseDown", function (tankId, clientX, clientY, shootingAngle) {
             let tankToShoot = gameObjects.find(obj => obj.tankId === tankId);
 
             let vx = (clientX - tankToShoot.position.x) / BULLET_SPEED;
             let vy = (clientY - tankToShoot.position.y) / BULLET_SPEED;
-            tankToShoot.makeShoot(vx, vy);
+            tankToShoot.makeShoot(vx, vy, shootingAngle);
         });
     }
 }

@@ -28,8 +28,7 @@ namespace BattleCityWeb.Hubs
                 tanks = _gameService.GetInitialTanks(usersList, canvasWidth, canvasHeight),
             };
 
-
-            await Clients.All.SendAsync("InitGameObjects", gameObjects);
+            await Clients.All.SendAsync("InitGameObjects", gameObjects, canvasWidth, canvasHeight);
         }
 
         public async Task HandleClientKeyDown(string userName, int keyCode)
@@ -42,9 +41,9 @@ namespace BattleCityWeb.Hubs
             await Clients.All.SendAsync("ReceiveHandledKeyUp", userName + "Tank", keyCode);
         }
 
-        public async Task HandleClientMouseDown(string userName, int clientX, int clientY)
+        public async Task HandleClientMouseDown(string userName, int clientX, int clientY, double shootingAngle)
         {
-            await Clients.All.SendAsync("ReceiveHandledMouseDown", userName + "Tank", clientX, clientY);
+            await Clients.All.SendAsync("ReceiveHandledMouseDown", userName + "Tank", clientX, clientY, shootingAngle);
         }
 
         public override async Task OnConnectedAsync()

@@ -148,6 +148,7 @@ class ExplosionSprite {
         this.dist = 0;
 
         this.size = 128;
+        this.r = this.size / 2;
     }
 
     draw(ctx) {
