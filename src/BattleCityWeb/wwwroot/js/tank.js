@@ -20,16 +20,18 @@ class Tank {
         this.maxSpeed = 5;
         this.tankDirection = tankDirection;
 
-        this.runSound = document.createElement('audio');
-        this.runSound.src = '/sounds/game/run.wav';
+        this.runSound = new Audio('/sounds/game/run.wav');
         this.runSound.volume = maxSoundVolume;
-        this.stopSound = document.createElement('audio');
-        this.stopSound.src = '/sounds/game/stop_impr.wav';
+        this.stopSound = new Audio('/sounds/game/stop_impr.wav');
         this.stopSound.volume = maxSoundVolume / 3;
+
+        this.shootSound = new Audio('/sounds/game/shoot.mp3');
 
         this.shootSprite = new ExplosionSprite();
         this.bullets = [];
         this.canShoot = true;
+
+        this.r = this.tankImage.width / 2;
     }
 
     draw(ctx) {
@@ -61,12 +63,35 @@ class Tank {
         // move the bullets
         for (let i = this.bullets.length - 1; i >= 0; i--) {
 
-            // check de collisions with another game objects
-            game.gameObjects.forEach((gameObject) => {
+            // check the collisions with the tanks
+            game.gameObjects.tanks.forEach((tank, index, arr) => {
+                if (tank != this) {
+                    if (distBetweenPoints(
+                        tank.position.x,
+                        tank.position.y,
+                        this.bullets[i].x,
+                        this.bullets[i].y)
+                        < this.bullets[i].visibleR + tank.r) {
 
-                if (detectShootingCollision(this.bullets[i], gameObject)) {
-                    console.dir(gameObject)
-                    alert('collision detected with object: ')
+                        // logic of exploiding the tank 
+                        arr.splice(index, 1);
+                        
+                    }
+                }
+            });
+
+            // check the collisions with the bricks
+            game.gameObjects.bricks.forEach((brick, index, arr) => {
+
+                if (distBetweenPoints(
+                    brick.position.x,
+                    brick.position.y,
+                    this.bullets[i].x,
+                    this.bullets[i].y)
+                    < this.bullets[i].visibleR + brick.r) {
+
+                    // remove(explode) the brick
+                    arr.splice(index, 1);
                 }
             });
 
@@ -84,6 +109,13 @@ class Tank {
             // and calculate the distance travelled
             this.bullets[i].dist += Math.sqrt(Math.pow(this.bullets[i].xv, 2) + Math.pow(this.bullets[i].yv, 2));
         }
+
+        // draw to debug
+        ctx.strokeStyle = 'yellow';
+        ctx.beginPath();
+        ctx.arc(this.position.x, this.position.y, this.r + 5, 0, Math.PI * 2, false);
+        ctx.stroke();
+        ctx.closePath();
     }
 
     updateAngle(nx, ny) {
@@ -97,9 +129,13 @@ class Tank {
         if (this.canShoot && this.bullets.length < BULLET_MAX) {
 
             this.bullets.push(new ExplosionSprite(
-                this.position.x - this.tankImage.width,
-                this.position.y - this.tankImage.height,
+                this.position.x,
+                this.position.y,
                 vx, vy));
+
+            this.shootSound.pause();
+            this.shootSound.currentTime = 0;
+            this.shootSound.play();
         }
 
         // prevent further shooting
@@ -119,6 +155,7 @@ class Tank {
     moveLeft() {
         this.tankDirection = 0;
         this.position.x -= this.maxSpeed;
+        console.dir('im moving, this.maxSpeed = ' + this.maxSpeed)
     }
     moveRight() {
         this.tankDirection = 2;

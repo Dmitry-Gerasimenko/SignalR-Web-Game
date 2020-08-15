@@ -9,11 +9,16 @@ class Game {
         this.brickImage = new Image(64, 64);
         this.brickImage.src = '/img/brick.png';
 
-        this.gameObjects = [];  
+        this.gameObjects = { tanks: [], bricks: [] };  
     }
 
     draw(ctx) {
-        this.gameObjects.forEach(obj => obj.draw(ctx));
+
+        // draw the bricks
+        this.gameObjects.bricks.forEach(obj => obj.draw(ctx));
+
+        // draw the tanks
+        this.gameObjects.tanks.forEach(obj => obj.draw(ctx));
     }
 }
 

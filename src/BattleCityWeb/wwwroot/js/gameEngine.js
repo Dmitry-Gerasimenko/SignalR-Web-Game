@@ -1,5 +1,5 @@
 ﻿const FPS = 45;
-const BULLET_MAX = 3;
+const BULLET_MAX = 2;
 const BULLET_SPEED = 15; // pixeles per second
 const BULLET_DIST = 0.6; // max dist of the bullet flying
 
@@ -14,13 +14,14 @@ gameConnection.on("InitiateGame", function () {
 gameConnection.on("InitGameObjects", function (initialGameObjects, initialCanvasWidth, initialCanvasHeight) {
 
     // Clear the objects before an init
-    game.gameObjects = [];
+    game.gameObjects.tanks = [];
+    game.gameObjects.bricks = [];
 
     // Initialize some tanks
     for (let i = 0; i < initialGameObjects.tanks.length; i++) {
         let maxSoundVolume = initialGameObjects.tanks[i].tankId === game.userName + "Tank" ? 0.6 : 0.3;
 
-        game.gameObjects.push(new Tank(
+        game.gameObjects.tanks.push(new Tank(
             game,
             initialGameObjects.tanks[i].tankId,
             initialGameObjects.tanks[i].position,
@@ -31,7 +32,8 @@ gameConnection.on("InitGameObjects", function (initialGameObjects, initialCanvas
 
     let widthCoefficient = initialCanvasWidth / 10;
     let heightCoefficient = initialCanvasHeight / 10;
-    // Create bricks from briks map
+
+    // Create bricks from briks map and push it into the game
     initialGameObjects.brickMap.forEach((row, rowIndex) => {
         row.forEach((brick, brickIndex) => {
 
@@ -41,13 +43,14 @@ gameConnection.on("InitGameObjects", function (initialGameObjects, initialCanvas
                     y: 20 + heightCoefficient * rowIndex
                 };
 
-                game.gameObjects.push(new Brick(position));
+                game.gameObjects.bricks.push(new Brick(position));
             }
         });
     });
 
-    let myTank = game.gameObjects.find(obj => obj.tankId === getCurrentUserNameWrapper() + 'Tank');
-    new InputHanlder(game.gameObjects, gameConnection, game.userName, myTank);
+    let myTank = game.gameObjects.tanks.find(obj => obj.tankId === getCurrentUserNameWrapper() + 'Tank');
+    //new InputHanlder(game.gameObjects, gameConnection, game.userName, myTank);
+    alert('input handler was created')
 });
 
 let canvas = document.getElementById('gameCanvas');

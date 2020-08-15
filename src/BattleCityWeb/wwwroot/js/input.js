@@ -3,7 +3,6 @@ class InputHanlder {
 
     constructor(gameObjects, gameConnection, userName, myTank) {
 
-
         document.addEventListener('mousedown', (event) => {
 
             gameConnection.invoke("HandleClientMouseDown", userName, event.clientX, event.clientY, myTank.turretToAngle)
@@ -30,7 +29,7 @@ class InputHanlder {
         });
 
         gameConnection.on("ReceiveHandledKeyDown", function (tankId, pressedKeyId) {
-            let tankToMove = gameObjects.find(obj => obj.tankId === tankId);
+            let tankToMove = gameObjects.tanks.find(obj => obj.tankId === tankId);
 
             switch (pressedKeyId) {
                 // w
@@ -56,7 +55,7 @@ class InputHanlder {
             }
         });
         gameConnection.on("ReceiveHandledKeyUp", function (tankId, pressedKeyId) {
-            let tankToStop = gameObjects.find(obj => obj.tankId === tankId);
+            let tankToStop = gameObjects.tanks.find(obj => obj.tankId === tankId);
 
             switch (pressedKeyId) {
                 // w
@@ -78,7 +77,7 @@ class InputHanlder {
             }
         });
         gameConnection.on("ReceiveHandledMouseDown", function (tankId, clientX, clientY, shootingAngle) {
-            let tankToShoot = gameObjects.find(obj => obj.tankId === tankId);
+            let tankToShoot = gameObjects.tanks.find(obj => obj.tankId === tankId);
 
             let vx = (clientX - tankToShoot.position.x) / BULLET_SPEED;
             let vy = (clientY - tankToShoot.position.y) / BULLET_SPEED;

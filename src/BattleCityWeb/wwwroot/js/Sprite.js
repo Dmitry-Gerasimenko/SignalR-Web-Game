@@ -149,6 +149,7 @@ class ExplosionSprite {
 
         this.size = 128;
         this.r = this.size / 2;
+        this.visibleR = this.size / 4;
     }
 
     draw(ctx) {
@@ -157,8 +158,14 @@ class ExplosionSprite {
             this.explosionAnimation[this.frameCount % this.spritesCount].position.x,
             this.explosionAnimation[this.frameCount % this.spritesCount].position.y,
             this.size, this.size,
-            this.x, this.y,
+            this.x - this.r, this.y - this.r,
             this.size, this.size);
+
+        ctx.strokeStyle = 'white';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.visibleR, 0, Math.PI * 2, false);
+        ctx.stroke();
+        ctx.closePath();
 
         this.frameCount++;
     }
