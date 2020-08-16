@@ -58,12 +58,13 @@ namespace BattleCityWeb.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
+        [Authorize]
         private async Task ExecuteChatCommandAsync(string command)
         {
             // todo: provide constants from appsettings
             if (command.ToLower().Contains("startbattle"))
             {
-                await _gameHubContext.Clients.All.SendAsync("InitiateGame");
+                await _gameHubContext.Clients.User(Context.UserIdentifier).SendAsync("InitiateGame");
             }
         }
     }

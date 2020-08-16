@@ -2,10 +2,14 @@
 const BULLET_MAX = 2;
 const BULLET_SPEED = 15; // pixeles per second
 const BULLET_DIST = 0.6; // max dist of the bullet flying
+const TANK_HEALTH = 3;
+const TEXT_INFO_FONT_SIZE = 12;
+const TEXT_INFO_FONT_WEIGHT_LIGHT = 20;
+const TEXT_INFO_FONT_WEIGHT_NORMAL = 50;
 
 let gameConnection = new signalR.HubConnectionBuilder().withUrl("/gamehub").build();
+let inputHandler;
 gameConnection.on("InitiateGame", function () {
-
     gameConnection.invoke("InitGameObjects", game.gameWidth, game.gameHeight)
         .catch(function (err) {
             return console.error(err.toString());
@@ -48,9 +52,14 @@ gameConnection.on("InitGameObjects", function (initialGameObjects, initialCanvas
         });
     });
 
+    // Remove all previuosly used handlers
+    // $(document).off(mousedown, keydown, ... );
+
+    // Get an own tank obj
     let myTank = game.gameObjects.tanks.find(obj => obj.tankId === getCurrentUserNameWrapper() + 'Tank');
-    //new InputHanlder(game.gameObjects, gameConnection, game.userName, myTank);
-    alert('input handler was created')
+
+    // Create a new current input handler
+    inputHandler = new InputHanlder(game.gameObjects, gameConnection, game.userName, myTank);
 });
 
 let canvas = document.getElementById('gameCanvas');
@@ -58,6 +67,8 @@ canvas.width = canvas.clientWidth;
 canvas.height = canvas.offsetHeight;
 
 let ctx = canvas.getContext('2d');
+ctx.font = TEXT_INFO_FONT_SIZE + 'px verdana';
+
 let GAME_WIDTH = canvas.clientWidth;
 let GAME_HEIGHT = canvas.clientHeight;
 

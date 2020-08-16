@@ -26,10 +26,13 @@ class Tank {
         this.stopSound.volume = maxSoundVolume / 3;
 
         this.shootSound = new Audio('/sounds/game/shoot.mp3');
+        this.explodeSound = new Audio('/sounds/game/tankExplode.mp3');
 
         this.shootSprite = new ExplosionSprite();
         this.bullets = [];
         this.canShoot = true;
+
+        this.health = TANK_HEALTH;
 
         this.r = this.tankImage.width / 2;
     }
@@ -62,6 +65,7 @@ class Tank {
 
         // move the bullets
         for (let i = this.bullets.length - 1; i >= 0; i--) {
+            let isBulletHitObject = false;
 
             // check the collisions with the tanks
             game.gameObjects.tanks.forEach((tank, index, arr) => {
@@ -73,9 +77,10 @@ class Tank {
                         this.bullets[i].y)
                         < this.bullets[i].visibleR + tank.r) {
 
-                        // logic of exploiding the tank 
-                        arr.splice(index, 1);
-                        
+                        // logic of getting shoot of the tank 
+                        tank.getShoot(index, arr);
+                        isBulletHitObject = true;
+                        return;
                     }
                 }
             });
@@ -90,8 +95,9 @@ class Tank {
                     this.bullets[i].y)
                     < this.bullets[i].visibleR + brick.r) {
 
-                    // remove(explode) the brick
+                    brick.getShoot();
                     arr.splice(index, 1);
+                    isBulletHitObject = true;
                 }
             });
 
@@ -108,14 +114,15 @@ class Tank {
 
             // and calculate the distance travelled
             this.bullets[i].dist += Math.sqrt(Math.pow(this.bullets[i].xv, 2) + Math.pow(this.bullets[i].yv, 2));
+
+            // Remove bullet if it hits
+            if (isBulletHitObject) {
+                this.bullets.splice(i, 1);
+            }
         }
 
-        // draw to debug
-        ctx.strokeStyle = 'yellow';
-        ctx.beginPath();
-        ctx.arc(this.position.x, this.position.y, this.r + 5, 0, Math.PI * 2, false);
-        ctx.stroke();
-        ctx.closePath();
+        // draw tank info
+        this.drawInfo(ctx);
     }
 
     updateAngle(nx, ny) {
@@ -126,7 +133,7 @@ class Tank {
 
         this.turretToAngle = newTurretAngle;
 
-        if (this.canShoot && this.bullets.length < BULLET_MAX) {
+        if (this.canShoot && this.bullets.length <= BULLET_MAX) {
 
             this.bullets.push(new ExplosionSprite(
                 this.position.x,
@@ -142,6 +149,16 @@ class Tank {
         this.canShoot = true;
     }
 
+    getShoot(index, tankArr) {
+        
+        if (--this.health == 0) {
+            //gameOver();
+            tankArr.splice(index, 1);
+        }
+
+        this.explodeSound.play();   
+    }
+
     run() {
         this.stopSound.pause();
         this.runSound.play();
@@ -155,7 +172,6 @@ class Tank {
     moveLeft() {
         this.tankDirection = 0;
         this.position.x -= this.maxSpeed;
-        console.dir('im moving, this.maxSpeed = ' + this.maxSpeed)
     }
     moveRight() {
         this.tankDirection = 2;
@@ -184,5 +200,16 @@ class Tank {
         ctx.drawImage(img, 0, 0);
 
         ctx.setTransform(1, 0, 0, 1, 0, 0);
+    }
+
+    drawInfo(ctx) {
+        ctx.font = TEXT_INFO_FONT_SIZE + 'px verdana';
+        if (this.health == 0) {
+            ctx.strokeStyle = 'gray';
+            ctx.strokeText("Here was  " + this.tankId + " ...", this.position.x, this.position.y);
+            return;
+        }
+
+        ctx.strokeText(this.tankId + ': (' + this.health + ')', this.position.x - this.r, this.position.y - this.r);
     }
 }
