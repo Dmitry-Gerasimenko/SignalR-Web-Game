@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using BLL.Interfaces;
-using Microsoft.AspNetCore.SignalR;
 using CommonComponents.CommonModels;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Authorization;
 
 namespace BattleCityWeb.Hubs
@@ -10,15 +10,23 @@ namespace BattleCityWeb.Hubs
     public class ChatHub : Hub
     {
         private readonly IService<MessageDto> _messagesService;
+        private readonly IHubContext<GameHub> _gameHubContext;
 
-        public ChatHub(IService<MessageDto> messagesService)
+        public ChatHub(IService<MessageDto> messagesService,
+            IHubContext<GameHub> gameHubContext)
         {
             _messagesService = messagesService;
+            _gameHubContext = gameHubContext;
         }
 
         [Authorize]
         public async Task SendMessage(string message)
         {
+            if (message.StartsWith("/"))
+            {
+                await ExecuteChatCommandAsync(message);
+            }
+
             // TODO: use try-catch
             var addedMessage = await _messagesService.AddAsync(new MessageDto
             {
@@ -48,6 +56,16 @@ namespace BattleCityWeb.Hubs
             }
 
             await base.OnDisconnectedAsync(exception);
+        }
+
+        [Authorize]
+        private async Task ExecuteChatCommandAsync(string command)
+        {
+            // todo: provide constants from appsettings
+            if (command.ToLower().Contains("startbattle"))
+            {
+                await _gameHubContext.Clients.User(Context.UserIdentifier).SendAsync("InitiateGame");
+            }
         }
     }
 }

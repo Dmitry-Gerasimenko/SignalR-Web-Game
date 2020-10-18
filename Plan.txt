@@ -6,6 +6,10 @@ Separate game and its logic with Game Api
 Create another one client app
 
 
+// todo:
+	when tank gets shooting, provide info about its turret angle, and send from server dat to notify clients about the current rotating angle
+	handle collisions, etc, sounds. etc
+
 Other:
 	provide client time based-on UTC server time in the messages, logs etc. (When message is created.)
 

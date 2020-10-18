@@ -1,8 +1,8 @@
-using BattleCityWeb.Extensions;
-using BattleCityWeb.Hubs;
-using CommonComponents.Settings;
 using DAL.Context;
 using DAL.Model.Chat;
+using BattleCityWeb.Hubs;
+using BattleCityWeb.Extensions;
+using CommonComponents.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -25,6 +25,7 @@ namespace BattleCityWeb
         public void ConfigureServices(IServiceCollection services)
         {
             services.ConfigureChatServices(Configuration);
+            services.ConfigureGameServices(Configuration);
 
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
@@ -68,6 +69,8 @@ namespace BattleCityWeb
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHub<ChatHub>("/chathub");
+                endpoints.MapHub<UsersHub>("/usershub");
+                endpoints.MapHub<GameHub>("/gamehub");
 
                 endpoints.MapControllerRoute(
                     name: "default",

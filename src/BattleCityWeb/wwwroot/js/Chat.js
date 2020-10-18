@@ -28,9 +28,7 @@ var createMessageElement = function(userName, message, avatarUrl) {
 //Disable send button until connection is established
 document.getElementById("sendButton").disabled = true;
 
-// Remove this const after
-const senderName = 'usernameFromChat.js';
-
+// Subscribe to events
 connection.on("ReceiveMessage", function (user, message, avatarUrl) {
     var createdMessageElement = createMessageElement(user, message, avatarUrl);
 
@@ -59,15 +57,19 @@ function startChathubConnection() {
         .start()
         .then(function () {
             document.getElementById("sendButton").disabled = false;
+            console.dir('CHAT CONNECTION STARTED')
         })
         .catch(function (err) {
             return console.error(err.toString());
         });
 }
 
+// Add event listeners
 document.getElementById("sendButton").addEventListener("click", function (event) {
+
     let msgArea = document.getElementById("messageTextArea");
     let msgText = msgArea.value;
+
     if (msgText == '') {
         msgArea.value = 'please no empty messages';
     }
